@@ -1,0 +1,11 @@
+# Slack & AWS Chatbot Settings
+hook_url_app = ""
+slack_workspace_id = ""
+slack_channel_id = ""
+
+# AWS EC2 Bastion Settings
+aws_key_pub_bastion = ""
+
+# Amazon CloudFront Key-Value Store Settings
+basic_auth_username = ""
+basic_auth_password = ""
