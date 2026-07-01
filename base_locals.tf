@@ -29,7 +29,8 @@ locals {
   ]
 
   # domain
-  domain = "dwh.vlayusuke.net"
+  domain      = "dwh.vlayusuke.net"
+  base_domain = "vlayusuke.net"
 
   # database info
   database_name             = "tf-dwh"
