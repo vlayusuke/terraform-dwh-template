@@ -147,3 +147,73 @@ resource "aws_iam_role_policy_attachment" "github_actions_backup" {
   role       = aws_iam_role.github_actions_backup.name
   policy_arn = aws_iam_policy.github_actions_backup.arn
 }
+
+
+# ===============================================================================
+# AWS IAM for AWS Lambda (House keeping)
+# ===============================================================================
+resource "aws_iam_role" "lambda_cloudwatch" {
+  name               = "${local.project}-${local.env}-iam-lmd-cwt-logs-error-alert-role"
+  path               = "/"
+  assume_role_policy = data.aws_iam_policy_document.lambda_cloudwatch_assume.json
+
+  tags = {
+    Name = "${local.project}-${local.env}-iam-lmd-cwt-logs-error-alert-role"
+  }
+}
+
+data "aws_iam_policy_document" "lambda_cloudwatch_assume" {
+  statement {
+    sid    = "LambdaAssume"
+    effect = "Allow"
+    actions = [
+      "sts:AssumeRole",
+    ]
+    principals {
+      type = "Service"
+      identifiers = [
+        "lambda.amazonaws.com",
+      ]
+    }
+  }
+}
+
+resource "aws_iam_policy" "lambda_cloudwatch" {
+  name   = "${local.project}-${local.env}-iam-lmd-cwt-logs-error-alert-policy"
+  policy = data.aws_iam_policy_document.lambda_cloudwatch.json
+
+  tags = {
+    Name = "${local.project}-${local.env}-iam-lmd-cwt-logs-error-alert-policy"
+  }
+}
+
+data "aws_iam_policy_document" "lambda_cloudwatch" {
+  statement {
+    sid    = "LogAccess"
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+    resources = [
+      "arn:aws:logs:${local.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${local.project}-${local.env}-*:*",
+    ]
+  }
+
+  statement {
+    sid    = "SNSPublish"
+    effect = "Allow"
+    actions = [
+      "sns:Publish",
+    ]
+    resources = [
+      aws_sns_topic.event_alarm.arn,
+    ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_cloudwatch" {
+  role       = aws_iam_role.lambda_cloudwatch.name
+  policy_arn = aws_iam_policy.lambda_cloudwatch.arn
+}
