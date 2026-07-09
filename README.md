@@ -37,9 +37,9 @@
 
 | Resources                  | Version  |
 | :------------------------- | -------: |
-| Terraform                  | 1.15.5   |
-| AWS Provider               | 6.52.0   |
-| AWS Cloud Control Provider | 1.90.0   |
+| Terraform                  | 1.15.7   |
+| AWS Provider               | 6.54.0   |
+| AWS Cloud Control Provider | 1.92.0   |
 
 ### AWS Lambda関数に使用しているPythonのruntimeのVersion
 
